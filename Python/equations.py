@@ -67,7 +67,7 @@ class Equation:
 					output.append(operatorStack.pop())
 				if len(operatorStack):
 					operatorStack.pop()
-				if operatorStack[-1] in functions:
+				if len(operatorStack) and operatorStack[-1] in functions:
 					output.append(operatorStack.pop())
 
 		while(len(operatorStack)):
@@ -222,6 +222,6 @@ class Equation:
 		return equal
 
 		
-eq = Equation("x")
+eq = Equation("(x-3)(x-4)")
 
-print(eq.equation, eq.ReversePolish, eq.solve(125), eq.isEqual(Equation("x-0.00000000001")))
+print(eq.equation, eq.ReversePolish, eq.solve(34), eq.isEqual(Equation("x-0.00000000001")))
