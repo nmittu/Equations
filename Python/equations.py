@@ -43,7 +43,7 @@ class Equation:
 		]
 		self.functions = functions
 		self.operaters = operaters
-		equation = self.fixVarMult(self.fixParenMult(self.convertNegetives(self.combineNums(self.findFuncTolkens(list(self.equation.replace(" ", "")))))))
+		equation = self.fixVarMult(self.fixParenMult(self.convertNegetives(self.combineNums(self.findFuncTokens(list(self.equation.replace(" ", "")))))))
 		print("".join(equation))
 		operatorStack = []
 		output = []
@@ -87,7 +87,7 @@ class Equation:
 
 	def fixVarMult(self, array):
 		for i in range(len(array)):
-			if not array[i] in self.operaters  and not is_number(array[i]) and array[i] != "(" and array[i] != ")" and array[i] != ",":
+			if not array[i] in self.operaters and not array[i] in self.functions and not is_number(array[i]) and array[i] != "(" and array[i] != ")" and array[i] != ",":
 				if i-1 >= 0 and not array[i-1] in self.operaters and not array[i-1] in self.functions and array[i-1] != "(" and array[i-1] != ")"and array[i-1] != ",":
 					array.insert(i, "*")
 					i = i-1
@@ -95,13 +95,15 @@ class Equation:
 	
 	def fixParenMult(self, array):
 		indices = [i for i, x in enumerate(array) if x == "("]
+		indices.reverse()
 		for i in indices:
 			if i-1 >= 0 and not array[i-1] in self.operaters and not array[i-1] in self.functions and array[i-1] != ",":
 				array.insert(i, "*")
 
 		indices = [i for i, x in enumerate(array) if x == ")"]
+		indices.reverse()
 		for i in indices:
-			if i+1 < len(array) and not array[i+1] in self.operaters and not array[i-1] in self.functions and array[i+1] != ")" and array[i+1] != ",":
+			if i+1 < len(array) and not array[i+1] in self.operaters and array[i+1] != ")" and array[i+1] != ",":
 				array.insert(i+1, "*")
 
 		return array
@@ -222,6 +224,7 @@ class Equation:
 		return equal
 
 		
-eq = Equation("x")
+eq = Equation("log(2, x)-3(log(4, 37x))")
 
-print(eq.equation, eq.ReversePolish, eq.solve(125), eq.isEqual(Equation("x-0.00000000001")))
+print(eq.ReversePolish)
+print(eq.equation, eq.ReversePolish, eq.solve(2**-54*(37)**-3), eq.isEqual(Equation("x-0.00000000001")))
