@@ -44,7 +44,6 @@ class Equation:
 		self.functions = functions
 		self.operaters = operaters
 		equation = self.fixVarMult(self.fixParenMult(self.convertNegetives(self.combineNums(self.findFuncTokens(list(self.equation.replace(" ", "")))))))
-		print("".join(equation))
 		operatorStack = []
 		output = []
 
@@ -128,7 +127,7 @@ class Equation:
 				output.append(token)
 		return output
 
-	def solve(self, varVal, varName="x"):
+	def solve(self, varVal=0, varName="x"):
 		ReversePolish = list(self.ReversePolish)
 		for n, i in enumerate(ReversePolish):
 			if i == varName:
@@ -226,5 +225,5 @@ class Equation:
 		
 eq = Equation("log(2, x)-3(log(4, 37x))")
 
-print(eq.ReversePolish)
-print(eq.equation, eq.ReversePolish, eq.solve(2**-54*(37)**-3), eq.isEqual(Equation("x-0.00000000001")))
+
+print(eq.equation, eq.ReversePolish, eq.solve(Equation("2^-54*37^-3").solve()), eq.isEqual(Equation("x-0.00000000001")))
