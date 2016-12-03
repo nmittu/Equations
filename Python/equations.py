@@ -100,7 +100,6 @@ class Equation:
 				array.insert(i, "*")
 
 		indices = [i for i, x in enumerate(array) if x == ")"]
-		indices.reverse()
 		for i in indices:
 			if i+1 < len(array) and not array[i+1] in self.operaters and array[i+1] != ")" and array[i+1] != ",":
 				array.insert(i+1, "*")
