@@ -1,6 +1,7 @@
 # Equations
 
-Equations is a simple library to solve mathematical equations such as `5log(10, x^2) When x=15`
+Equations is a simple library to solve mathematical equations such as:
+![equation](http://www4b.wolframalpha.com/Calculate/MSP/MSP26271g52eee6aac06a8100004d4hf2c302h64eg0?MSPStoreType=image/gif&s=63)
 
 #### Features
 Equation supports the following opperations and functions:
