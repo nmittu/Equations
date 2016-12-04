@@ -76,7 +76,9 @@ class Equation:
 		self.ReversePolish = output
 
 	def findFuncTokens(self, array):
-		for func in self.functions:
+		funcs = sorted(self.functions.keys(), key=len);
+		funcs.reverse();
+		for func in funcs:
 			while search.search(array, list(func)) != None:
 				i = search.search(array, list(func))
 				array[i] = func
@@ -199,7 +201,8 @@ class Equation:
 		self.shunt()
 
 		
-eq = Equation("add(2, abs(-3))")
-eq.addFunc("add", 2, lambda x, y: x+y)
+eq = Equation("atan2(log(3,2+(3*2/6)-x), 4)")
+eq.addFunc("atan2", 2, lambda x, y: math.atan2(x, y))
+
 print(eq.ReversePolish)
-print(eq.equation, eq.ReversePolish, eq.solve(125), eq.isEqual(Equation("x-0.00000000001")))
+print(eq.equation, eq.ReversePolish, eq.solve(1))#, eq.isEqual(Equation("x-0.00000000001")))
