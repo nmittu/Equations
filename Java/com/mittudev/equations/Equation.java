@@ -15,15 +15,7 @@ public class Equation {
     private String equation;
     private ArrayList<String> reversePolish = new ArrayList<>();
     private static HashMap<String, Tuple<Integer, String>> operators = new HashMap<>();
-    private static String[] functions = {"log",
-                                         "ln",
-                                         "abs",
-                                         "acos",
-                                         "asin",
-                                         "atan",
-                                         "cos",
-                                         "sin",
-                                         "tan"};
+    private static HashMap<String, Tuple<Integer, Function>> functions = new HashMap<>();
 
 
     public Equation(String equation){
@@ -35,6 +27,16 @@ public class Equation {
         operators.put("~", new Tuple<>(6, "R"));
         operators.put("|", new Tuple<>(4, "R"));
         operators.put("!", new Tuple<>(5, "R"));
+
+        functions.put("log", new Tuple<>(2, (double[] args) -> MathUtil.log(args[0], args[1])));
+        functions.put("ln", new Tuple<>(1, (double[] args) -> Math.log(args[0])));
+        functions.put("abs", new Tuple<>(1, (double[] args) -> Math.abs(args[0])));
+        functions.put("acos", new Tuple<>(1, (double[] args) -> Math.acos(args[0])));
+        functions.put("asin", new Tuple<>(1, (double[] args) -> Math.asin(args[0])));
+        functions.put("atan", new Tuple<>(1, (double[] args) -> Math.atan(args[0])));
+        functions.put("cos", new Tuple<>(1, (double[] args) -> Math.cos(args[0])));
+        functions.put("sin", new Tuple<>(1, (double[] args) -> Math.sin(args[0])));
+        functions.put("tan", new Tuple<>(1, (double[] args) -> Math.tan(args[0])));
 
         this.equation = equation;
         shunt();
@@ -48,9 +50,9 @@ public class Equation {
 
 
         for(String token : equationArray){
-            if(!operators.containsKey(token) && !Arrays.asList(functions).contains(token) && !token.equals("(") && !token.equals(")") && !token.equals(",")){
+            if(!operators.containsKey(token) && !functions.containsKey(token) && !token.equals("(") && !token.equals(")") && !token.equals(",")){
                 output.add(token);
-            }else if (Arrays.asList(functions).contains(token)){
+            }else if (functions.containsKey(token)){
                 operatorStack.push(token);
             }else if (token.equals(",")){
                 while (operatorStack.size()>0 && !operatorStack.lastElement().equals("(")){
@@ -70,7 +72,7 @@ public class Equation {
                 if (operatorStack.size()>0){
                     operatorStack.pop();
                 }
-                if (Arrays.asList(functions).contains(operatorStack.lastElement())){
+                if (functions.containsKey(operatorStack.lastElement())){
                     output.add(operatorStack.pop());
                 }
             }
@@ -85,7 +87,10 @@ public class Equation {
 
     private ArrayList<String> findFuncTokens(ArrayList<String> array){
         ArrayListUtil<String> listUtil = new ArrayListUtil<>();
-        for(String func : functions){
+        ArrayList<String> funcs = new ArrayList<>(functions.keySet());
+        Collections.sort(funcs, new LengthComparator());
+        Collections.reverse(funcs);
+        for(String func : functions.keySet()){
             ArrayList<String> funcArray = new ArrayList<>(Arrays.asList(func.split("")));
             while (listUtil.search(array, funcArray) != -1){
                 int i = listUtil.search(array, funcArray);
@@ -130,7 +135,7 @@ public class Equation {
         ArrayList<Integer> indices = new ArrayListUtil<String>().indexOfAll("(", array);
         Collections.reverse(indices);
         for(int i : indices){
-            if(i-1 >= 0 && !operators.containsKey(array.get(i-1)) && !Arrays.asList(functions).contains(array.get(i-1)) && !array.get(i-1).equals(",") && !array.get(i-1).equals("(")){
+            if(i-1 >= 0 && !operators.containsKey(array.get(i-1)) && !functions.containsKey(array.get(i-1)) && !array.get(i-1).equals(",") && !array.get(i-1).equals("(")){
                 array.add(i, "*");
             }
         }
@@ -148,7 +153,7 @@ public class Equation {
     private ArrayList<String> fixVarMult(ArrayList<String> array){
         for(int i = 0; i< array.size(); i++){
             if(!operators.containsKey(array.get(i)) && !StringUtil.is_number(array.get(i)) && !array.get(i).equals("(") && !array.get(i).equals(")") && !array.get(i).equals(",")){
-                if (i-1 >=0 && !operators.containsKey(array.get(i-1)) && !Arrays.asList(functions).contains(array.get(i-1)) && !array.get(i-1).equals("(") && !array.get(i-1).equals(")") && !array.get(i-1).equals(",")){
+                if (i-1 >=0 && !operators.containsKey(array.get(i-1)) && !functions.containsKey(array.get(i-1)) && !array.get(i-1).equals("(") && !array.get(i-1).equals(")") && !array.get(i-1).equals(",")){
                     array.add(i, "*");
                     i--;
                 }
@@ -204,44 +209,19 @@ public class Equation {
                     reversePolish.set(i-1, Double.toString(MathUtil.factorial((int) new Double(reversePolish.get(i-1)).doubleValue())));
                     i--;
                 }
-            }else if (Arrays.asList(functions).contains(reversePolish.get(i))){
-                if (reversePolish.get(i).equals("log")){
-                    reversePolish.remove(i);
-                    reversePolish.set(i-2, Double.toString(MathUtil.log(new Double(reversePolish.get(i-2)), new Double(reversePolish.remove(i-1)))));
-                    i = i-2;
-                }else if (reversePolish.get(i).equals("ln")){
-                    reversePolish.remove(i);
-                    reversePolish.set(i-1, Double.toString(Math.log(new Double(reversePolish.get(i-1)))));
-                    i--;
-                }else if (reversePolish.get(i).equals("abs")){
-                    reversePolish.remove(i);
-                    reversePolish.set(i-1, Double.toString(Math.abs(new Double(reversePolish.get(i-1)))));
-                    i--;
-                }else if (reversePolish.get(i).equals("cos")){
-                    reversePolish.remove(i);
-                    reversePolish.set(i-1, Double.toString(Math.cos(new Double(reversePolish.get(i-1)))));
-                    i--;
-                }else if (reversePolish.get(i).equals("sin")){
-                    reversePolish.remove(i);
-                    reversePolish.set(i-1, Double.toString(Math.sin(new Double(reversePolish.get(i-1)))));
-                    i--;
-                }else if (reversePolish.get(i).equals("tan")){
-                    reversePolish.remove(i);
-                    reversePolish.set(i-1, Double.toString(Math.tan(new Double(reversePolish.get(i-1)))));
-                    i--;
-                }else if (reversePolish.get(i).equals("acos")){
-                    reversePolish.remove(i);
-                    reversePolish.set(i-1, Double.toString(Math.acos(new Double(reversePolish.get(i-1)))));
-                    i--;
-                }else if (reversePolish.get(i).equals("asin")){
-                    reversePolish.remove(i);
-                    reversePolish.set(i-1, Double.toString(Math.asin(new Double(reversePolish.get(i-1)))));
-                    i--;
-                }else if (reversePolish.get(i).equals("atan")){
-                    reversePolish.remove(i);
-                    reversePolish.set(i-1, Double.toString(Math.atan(new Double(reversePolish.get(i-1)))));
-                    i--;
+            }else if (functions.containsKey(reversePolish.get(i))){
+                int arity = functions.get(reversePolish.get(i)).get0();
+                double[] args = new double[arity];
+                for(int j = 0; j < arity; j++){
+                    if(j>0){
+                        args[j] = new Double(reversePolish.remove(i-arity+j));
+                    }else{
+                        args[j] = new Double(reversePolish.get(i-arity));
+                    }
                 }
+                reversePolish.set(i-arity, Double.toString(functions.get(reversePolish.get(i-arity+1)).get1().run(args)));
+                reversePolish.remove(i-arity+1);
+                i = i - arity;
             }
             i++;
         }
@@ -287,4 +267,18 @@ public class Equation {
         return reversePolish;
     }
 
+    public void addFunc(String name, int arity, Function func){
+        functions.put(name, new Tuple<>(arity, func));
+        shunt();
+    }
+
+}
+
+class LengthComparator implements java.util.Comparator<String> {
+    public int compare(String s1, String s2) {
+        int dist1 = s1.length();
+        int dist2 = s2.length();
+
+        return dist1 - dist2;
+    }
 }

@@ -169,15 +169,15 @@ class Equation:
 					i = i-1
 			elif ReversePolish[i] in self.functions:
 				args = [];
-				arity = self.functions[ReversePolish[i]][0]
-				for j in range(0, arity):
+				airity = self.functions[ReversePolish[i]][0]
+				for j in range(0, airity):
 					if(j):
-						args.append(float(ReversePolish.pop(i-arity+j)))
+						args.append(float(ReversePolish.pop(i-airity+j)))
 					else:
-						args.append(float(ReversePolish[i-arity]))
-				ReversePolish[i-arity] = self.functions[ReversePolish[i-arity+1]][1](*args)
-				del ReversePolish[i-arity+1]
-				i = i-arity
+						args.append(float(ReversePolish[i-airity]))
+				ReversePolish[i-airity] = self.functions[ReversePolish[i-airity+1]][1](*args)
+				del ReversePolish[i-airity+1]
+				i = i-airity
 
 			i = i+1
 
