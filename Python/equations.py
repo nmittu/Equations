@@ -16,10 +16,7 @@ class Equation:
 	def __init__(self, equation):
 		self.equation = equation
 		self.ReversePolish = []
-		self.shunt()
-
-	def shunt(self):
-		operaters = {
+		self.operaters = {
 			"^": [4, "R"],
 			"*": [3, "L"],
 			"/": [3, "L"],
@@ -30,19 +27,23 @@ class Equation:
 			"!": [5, "R"]
 		}
 
-		functions = [
-			"log",
-			"ln",
-			"abs",
-			"acos",
-			"asin",
-			"atan",
-			"cos",
-			"sin",
-			"tan"
-		]
-		self.functions = functions
-		self.operaters = operaters
+		self.functions = {
+			"log": [2, lambda x, y: math.log(y, x)],
+			"ln": [1, lambda x: math.log(x)],
+			"abs": [1, lambda x: abs(x)],
+			"acos": [1, lambda x: math.acos(x)],
+			"asin": [1, lambda x: math.asin(x)],
+			"atan": [1, lambda x: math.atan(x)],
+			"cos": [1, lambda x: math.cos(x)],
+			"sin": [1, lambda x: math.sin(x)],
+			"tan": [1, lambda x: math.tan(x)]
+		}
+		self.shunt()
+
+	def shunt(self):
+		
+		functions = self.functions
+		operaters = self.operaters
 		equation = self.fixVarMult(self.fixParenMult(self.convertNegetives(self.combineNums(self.findFuncTokens(list(self.equation.replace(" ", "")))))))
 		operatorStack = []
 		output = []
@@ -86,7 +87,7 @@ class Equation:
 
 	def fixVarMult(self, array):
 		for i in range(len(array)):
-			if not array[i] in self.operaters and not is_number(array[i]) and array[i] != "(" and array[i] != ")" and array[i] != ",":
+			if not array[i] in self.operaters  and not is_number(array[i]) and array[i] != "(" and array[i] != ")" and array[i] != ",":
 				if i-1 >= 0 and not array[i-1] in self.operaters and not array[i-1] in self.functions and array[i-1] != "(" and array[i-1] != ")"and array[i-1] != ",":
 					array.insert(i, "*")
 					i = i-1
@@ -94,15 +95,13 @@ class Equation:
 	
 	def fixParenMult(self, array):
 		indices = [i for i, x in enumerate(array) if x == "("]
-		indices.reverse()
 		for i in indices:
-			if i-1 >= 0 and not array[i-1] in self.operaters and not array[i-1] in self.functions and array[i-1] != "," and array[i-1] != "(":
+			if i-1 >= 0 and not array[i-1] in self.operaters and not array[i-1] in self.functions and array[i-1] != ",":
 				array.insert(i, "*")
 
 		indices = [i for i, x in enumerate(array) if x == ")"]
-		indices.reverse()
 		for i in indices:
-			if i+1 < len(array) and not array[i+1] in self.operaters and array[i+1] != ")" and array[i+1] != ",":
+			if i+1 < len(array) and not array[i+1] in self.operaters and not array[i-1] in self.functions and array[i+1] != ")" and array[i+1] != ",":
 				array.insert(i+1, "*")
 
 		return array
@@ -127,7 +126,7 @@ class Equation:
 				output.append(token)
 		return output
 
-	def solve(self, varVal=0, varName="x"):
+	def solve(self, varVal, varName="x"):
 		ReversePolish = list(self.ReversePolish)
 		for n, i in enumerate(ReversePolish):
 			if i == varName:
@@ -169,42 +168,16 @@ class Equation:
 					ReversePolish[i-1] = math.factorial(float(ReversePolish[i-1]))
 					i = i-1
 			elif ReversePolish[i] in self.functions:
-				if ReversePolish[i] == "log":
-					del ReversePolish[i]
-					ReversePolish[i-2] = math.log(float(ReversePolish.pop(i-1)), float(ReversePolish[i-2]))
-					i = i-2
-				elif ReversePolish[i] == "ln":
-					del ReversePolish[i]
-					ReversePolish[i-1] = math.log(float(ReversePolish[i-1]))
-					i = i-1
-				elif ReversePolish[i] == "abs":
-					del ReversePolish[i]
-					ReversePolish[i-1] = abs(float(ReversePolish[i-1]))
-					i = i-1
-				elif ReversePolish[i] == "cos":
-					del ReversePolish[i]
-					ReversePolish[i-1] = math.cos(float(ReversePolish[i-1]))
-					i = i-1
-				elif ReversePolish[i] == "sin":
-					del ReversePolish[i]
-					ReversePolish[i-1] = math.sin(float(ReversePolish[i-1]))
-					i = i-1
-				elif ReversePolish[i] == "tan":
-					del ReversePolish[i]
-					ReversePolish[i-1] = math.tan(float(ReversePolish[i-1]))
-					i = i-1
-				elif ReversePolish[i] == "acos":
-					del ReversePolish[i]
-					ReversePolish[i-1] = math.acos(float(ReversePolish[i-1]))
-					i = i-1
-				elif ReversePolish[i] == "asin":
-					del ReversePolish[i]
-					ReversePolish[i-1] = math.asin(float(ReversePolish[i-1]))
-					i = i-1
-				elif ReversePolish[i] == "atan":
-					del ReversePolish[i]
-					ReversePolish[i-1] = math.atan(float(ReversePolish[i-1]))
-					i = i-1
+				args = [];
+				arity = self.functions[ReversePolish[i]][0]
+				for j in range(0, arity):
+					if(j):
+						args.append(float(ReversePolish.pop(i-arity+j)))
+					else:
+						args.append(float(ReversePolish[i-arity]))
+				ReversePolish[i-arity] = self.functions[ReversePolish[i-arity+1]][1](*args)
+				del ReversePolish[i-arity+1]
+				i = i-arity
 
 			i = i+1
 
@@ -221,9 +194,12 @@ class Equation:
 				equal = False
 
 		return equal
+	def addFunc(self, name, arity, func):
+		self.functions[name] = [arity, func]
+		self.shunt()
 
 		
-eq = Equation("log(2, x)-3(log(4, 37x))")
-
-
-print(eq.equation, eq.ReversePolish, eq.solve(Equation("2^-54*37^-3").solve()), eq.isEqual(Equation("x")))
+eq = Equation("add(2, abs(-3))")
+eq.addFunc("add", 2, lambda x, y: x+y)
+print(eq.ReversePolish)
+print(eq.equation, eq.ReversePolish, eq.solve(125), eq.isEqual(Equation("x-0.00000000001")))
