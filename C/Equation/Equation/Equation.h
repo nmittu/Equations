@@ -12,13 +12,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "HashTable.h"
+#include "MathDef.h"
+#include "StrTools.h"
 
 struct Equation {
+    struct HashTable* operators;
+    struct HashTable* functions;
     char** rev_polish;
     char* equation;
     size_t rev_pol_len;
 };
 
-struct Equation* create_equation(char* equation);
+struct Equation* equation_create(char* equation);
 
 #endif /* Equation_h */

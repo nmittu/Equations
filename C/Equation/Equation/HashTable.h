@@ -15,6 +15,8 @@
 
 struct Data{
     int arity;
+    int precedence;
+    char associativity;
     long double (*callback)(long double[]);
 };
 

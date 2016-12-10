@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "main:main.c">
+      </ContextState>
+      <ContextState
+         contextName = "find_func_tokens:Equation.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "funcNames[i-1]">
+            </PersistentString>
+            <PersistentString
+               value = "hash_search_i(table, i)-&gt;key">
+            </PersistentString>
+            <PersistentString
+               value = "funcNames[i]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
