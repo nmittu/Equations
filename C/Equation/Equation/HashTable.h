@@ -20,17 +20,22 @@ struct Data{
 
 struct DataItem{
     char* key;
-    struct Data data;
+    int index;
+    struct Data* data;
 };
 
 struct HashTable{
-    struct DataItem* hash_array;
+    struct DataItem** hash_array;
     size_t size;
+    int length;
 };
 
 struct HashTable* hash_create(size_t size);
-struct DataItem* hash_search(struct HashTable*, char* key);
-void hash_insert(struct HashTable*, char* key, struct Data data);
-struct DataItem* hash_delete(struct HashTable*, struct DataItem* item);
+struct DataItem* hash_search(struct HashTable* table, char* key);
+struct DataItem* hash_search_i(struct HashTable* table, int index);
+void hash_insert(struct HashTable* table, char* key, struct Data* data);
+struct DataItem* hash_delete(struct HashTable* table, char* key);
+struct DataItem* hash_delete_i(struct HashTable* table, int index);
+
 
 #endif /* HashTable_h */
