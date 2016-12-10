@@ -50,10 +50,10 @@ int main(int argc, const char * argv[]) {
         printf("%Lf\n\n", hash_search_i(table, i)->data->callback(arg));
     }
     
-    printf("----------");
+    printf("----------\n");
     
     hash_delete(table, "third");
-    hash_delete_i(table, 4);
+    hash_delete_i(table, 1);
     
     
     for (int i = 0; i<table->length; i++) {

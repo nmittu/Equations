@@ -14,13 +14,17 @@ struct HashTable* hash_create(size_t size){
     hash->size = size;
     hash->hash_array = malloc(sizeof(struct DataItem*)*size);
     hash->length = 0;
+
+	for (int i = 0; i < size; i++){
+		hash->hash_array[i] = NULL;
+	}
     
     return hash;
 }
 
 void hash_insert(struct HashTable* table, char* key, struct Data* data){
     int i = 0;
-    while(i < table->size && table->hash_array[i] != NULL){
+    while(i < table->size && table->hash_array[i]){
         i++;
     }
     
@@ -33,7 +37,7 @@ void hash_insert(struct HashTable* table, char* key, struct Data* data){
 
 struct DataItem* hash_search(struct HashTable* table, char* key){
     for (int i = 0; i<table->size; i++) {
-        if(table->hash_array[i] != NULL && strcmp(table->hash_array[i]->key, key) == 0){
+        if(table->hash_array[i] && strcmp(table->hash_array[i]->key, key) == 0){
             return table->hash_array[i];
         }
     }
@@ -42,7 +46,7 @@ struct DataItem* hash_search(struct HashTable* table, char* key){
 
 struct DataItem* hash_search_i(struct HashTable* table, int index){
     for (int i = 0; i<table->size; i++) {
-        if(table->hash_array[i] != NULL && table->hash_array[i]->index == index){
+        if(table->hash_array[i] && table->hash_array[i]->index == index){
             return table->hash_array[i];
         }
     }
@@ -51,10 +55,16 @@ struct DataItem* hash_search_i(struct HashTable* table, int index){
 
 struct DataItem* hash_delete(struct HashTable* table, char* key){
     for (int i = 0; i<table->size; i++) {
-        if (table->hash_array[i] != NULL && strcmp(table->hash_array[i]->key, key) == 0) {
+        if (table->hash_array[i] && strcmp(table->hash_array[i]->key, key) == 0) {
             struct DataItem* ret = table->hash_array[i];
             table->hash_array[i] = NULL;
-            table->length--;
+            
+
+			for (int i = ret->index+1; i < table->length; i++) {
+				hash_search_i(table, i)->index--;
+			}
+
+			table->length--;
             return ret;
         }
     }
@@ -63,9 +73,14 @@ struct DataItem* hash_delete(struct HashTable* table, char* key){
 
 struct DataItem* hash_delete_i(struct HashTable* table, int index){
     for (int i = 0; i<table->size; i++) {
-        if (table->hash_array[i] != NULL && table->hash_array[i]->index == index) {
+        if (table->hash_array[i] && table->hash_array[i]->index == index) {
             struct DataItem* ret = table->hash_array[i];
             table->hash_array[i] = NULL;
+
+			for (int i = ret->index + 1; i < table->length; i++) {
+				hash_search_i(table, i)->index--;
+			}
+
             table->length--;
             return ret;
         }
