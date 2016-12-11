@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		011CA4661DFBDE9B000C7A76 /* MathDef.c in Sources */ = {isa = PBXBuildFile; fileRef = 011CA4641DFBDE9B000C7A76 /* MathDef.c */; };
 		011CA4691DFBE3DD000C7A76 /* StrTools.c in Sources */ = {isa = PBXBuildFile; fileRef = 011CA4671DFBE3DD000C7A76 /* StrTools.c */; };
+		0151AD7A1DFCD64200DD17F2 /* ArrayTools.c in Sources */ = {isa = PBXBuildFile; fileRef = 0151AD781DFCD64200DD17F2 /* ArrayTools.c */; };
 		01B1D4EE1DF9F456002A4075 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B1D4ED1DF9F456002A4075 /* main.c */; };
 		01B1D4F61DF9F480002A4075 /* Equation.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B1D4F41DF9F480002A4075 /* Equation.c */; };
 		01B1D4F91DFA026B002A4075 /* HashTable.c in Sources */ = {isa = PBXBuildFile; fileRef = 01B1D4F71DFA026B002A4075 /* HashTable.c */; };
@@ -31,6 +32,8 @@
 		011CA4651DFBDE9B000C7A76 /* MathDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathDef.h; sourceTree = "<group>"; };
 		011CA4671DFBE3DD000C7A76 /* StrTools.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = StrTools.c; sourceTree = "<group>"; };
 		011CA4681DFBE3DD000C7A76 /* StrTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StrTools.h; sourceTree = "<group>"; };
+		0151AD781DFCD64200DD17F2 /* ArrayTools.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ArrayTools.c; sourceTree = "<group>"; };
+		0151AD791DFCD64200DD17F2 /* ArrayTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayTools.h; sourceTree = "<group>"; };
 		01B1D4EA1DF9F456002A4075 /* Equation */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Equation; sourceTree = BUILT_PRODUCTS_DIR; };
 		01B1D4ED1DF9F456002A4075 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		01B1D4F41DF9F480002A4075 /* Equation.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Equation.c; sourceTree = "<group>"; };
@@ -78,6 +81,8 @@
 				011CA4651DFBDE9B000C7A76 /* MathDef.h */,
 				011CA4671DFBE3DD000C7A76 /* StrTools.c */,
 				011CA4681DFBE3DD000C7A76 /* StrTools.h */,
+				0151AD781DFCD64200DD17F2 /* ArrayTools.c */,
+				0151AD791DFCD64200DD17F2 /* ArrayTools.h */,
 			);
 			path = Equation;
 			sourceTree = "<group>";
@@ -140,6 +145,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				01B1D4F91DFA026B002A4075 /* HashTable.c in Sources */,
+				0151AD7A1DFCD64200DD17F2 /* ArrayTools.c in Sources */,
 				01B1D4EE1DF9F456002A4075 /* main.c in Sources */,
 				011CA4691DFBE3DD000C7A76 /* StrTools.c in Sources */,
 				01B1D4F61DF9F480002A4075 /* Equation.c in Sources */,

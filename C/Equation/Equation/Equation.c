@@ -9,20 +9,8 @@
 #include "Equation.h"
 #include "MathDef.h"
 #include "StrTools.h"
+#include "ArrayTools.h"
 #define FUNC_NAME_SIZE 50
-
-void insert_str(char** array, size_t* size, char* str, int index) {
-	for (int i = *size; i > index; i--){
-		array[i] = array[i - 1];
-	}
-	(*size)++;
-	array[index] = str;
-}
-
-void remove_str_from_array(char** array, int index, int array_length){
-    free(array[index]);
-    for(int i = index; i < array_length - 1; i++) array[i] = array[i + 1];
-}
 
 char** split_str(char** dest, char* str, size_t* size){
     for (int i = 0; i<*size; i++) {
