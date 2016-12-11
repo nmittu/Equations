@@ -87,3 +87,13 @@ struct DataItem* hash_delete_i(struct HashTable* table, int index){
     }
     return NULL;
 }
+
+void hash_destroy(struct HashTable* table){
+    for (int i = 0; i<table->length; i++) {
+        struct DataItem* item = hash_search_i(table, i);
+        free(item->data);
+        free(item);
+    }
+    free(table->hash_array);
+    free(table);
+}

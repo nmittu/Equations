@@ -38,6 +38,7 @@ struct DataItem* hash_search_i(struct HashTable* table, int index);
 void hash_insert(struct HashTable* table, char* key, struct Data* data);
 struct DataItem* hash_delete(struct HashTable* table, char* key);
 struct DataItem* hash_delete_i(struct HashTable* table, int index);
+void hash_destroy(struct HashTable* table);
 
 
 #endif /* HashTable_h */

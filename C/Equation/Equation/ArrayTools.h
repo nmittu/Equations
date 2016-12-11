@@ -14,5 +14,7 @@
 void insert_str(char** array, size_t* size, char* str, int index);
 void remove_str_from_array(char** array, int index, int array_length);
 char** copy_array(char** array, size_t size);
+void free_array(char** array, size_t size);
+
 
 #endif /* ArrayTools_h */

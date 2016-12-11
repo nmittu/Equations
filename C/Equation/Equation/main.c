@@ -28,7 +28,7 @@ int main(int argc, const char * argv[]) {
     printf("\n");
     printf("%.17Lf\n", equation_solve(eq, 5, "x"));
 
-	
+    equation_destroy(eq);
 
     return 0;
 }

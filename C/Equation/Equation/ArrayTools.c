@@ -31,3 +31,12 @@ char** copy_array(char** array, size_t size){
     }
     return copy;
 }
+
+void free_array(char** array, size_t size){
+    for (int i = 0; i<size; i++) {
+        if(array[i] != NULL){
+            free(array[i]);
+        }
+    }
+    free(array);
+}

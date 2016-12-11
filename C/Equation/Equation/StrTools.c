@@ -27,7 +27,10 @@ int str_search(char** source, size_t src_size, char* target){
             strcat(str_found, source[i+j]);
         }
         if (strcmp(str_found, target) == 0) {
+            free(str_found);
             return i;
+        }else{
+            free(str_found);
         }
     }
         

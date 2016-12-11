@@ -50,8 +50,9 @@ char** find_func_tokens(char** array, size_t* size, struct HashTable* table){
                 (*size)--;
             }
         }
+        free(funcNames[i]);
     }
-    
+    free(funcNames);
     
     return array;
 }
@@ -74,6 +75,8 @@ char** combine_nums(char** array, size_t* size) {
 		}
 	}
 
+    free(array);
+    
 	*size = out_len;
 	return out;
 }
@@ -83,7 +86,10 @@ char** convert_negatives(char** array, size_t* size, struct HashTable* table) {
 		if (strcmp(array[i], "-") == 0) {
 			if (i - 1 < 0 || hash_search(table, array[i - 1]) != NULL || strcmp(array[i - 1], "(") == 0) {
 				free(array[i]);
-				array[i] = "~";
+                char* neg = malloc(sizeof(char)*2);
+                *neg = '~';
+                *(neg+1) = '\0';
+				array[i] = neg;
 			}
 		}
 	}
@@ -95,11 +101,17 @@ char** fix_paren_mult(char** array, size_t* size, struct HashTable* operators, s
 	for (int i = 0; i < *size; i++) {
 		if (strcmp(array[i], "(") == 0) {
 			if (i - 1 >= 0 && hash_search(operators, array[i - 1]) == NULL && hash_search(functions, array[i - 1]) == NULL && strcmp(array[i - 1], ",") != 0) {
-				insert_str(array, size, "*", i);
+                char* mult = malloc(sizeof(char)*2);
+                *mult = '*';
+                *(mult+1) = '\0';
+				insert_str(array, size, mult, i);
 			}
 		}else if (strcmp(array[i], ")") == 0){
 			if (i + 1 < *size && hash_search(operators, array[i + 1]) == NULL && hash_search(functions, array[i + 1]) == NULL && strcmp(array[i + 1], ",") != 0 && strcmp(array[i + 1], ")") != 0) {
-				insert_str(array, size, "*", i+1);
+                char* mult = malloc(sizeof(char)*2);
+                *mult = '*';
+                *(mult+1) = '\0';
+				insert_str(array, size, mult, i+1);
 			}
 		}
 	}
@@ -111,7 +123,10 @@ char** fix_var_mult(char** array, size_t* size, struct HashTable* operators, str
 	for (int i = 0; i < *size; i++){
 		if (hash_search(operators, array[i]) == NULL && !str_is_dec(array[i]) && strcmp(array[i], "(") != 0 && strcmp(array[i], ")") != 0 && strcmp(array[i], ",") != 0) {
 			if (i - 1 >= 0 && hash_search(operators, array[i - 1]) == NULL && hash_search(functions, array[i - 1]) == NULL && strcmp(array[i - 1], "(") != 0 && strcmp(array[i - 1], ")") != 0 && strcmp(array[i - 1], ",") != 0) {
-				insert_str(array, size, "*", i);
+                char* mult = malloc(sizeof(char)*2);
+                *mult = '*';
+                *(mult+1) = '\0';
+				insert_str(array, size, mult, i);
 				i--;
 			}
 		}
@@ -340,59 +355,78 @@ long double equation_solve(struct Equation* eq, long double var_val, char* var_n
     while (i<rev_pol_len) {
         if(hash_search(eq->operators, rev_polish[i]) != NULL){
             if(strcmp(rev_polish[i], "^")==0){
+                free(rev_polish[i]);
                 remove_str_from_array(rev_polish, i, rev_pol_len--);
                 sprintf(rev_polish[i-2], "%.17f", pow(atof(rev_polish[i-2]), atof(rev_polish[i-1])));
+                free(rev_polish[i-1]);
                 remove_str_from_array(rev_polish, i-1, rev_pol_len--);
                 i -= 2;
             }else if (strcmp(rev_polish[i], "*")==0){
+                free(rev_polish[i]);
                 remove_str_from_array(rev_polish, i, rev_pol_len--);
                 sprintf(rev_polish[i-2], "%.17f", atof(rev_polish[i-2]) * atof(rev_polish[i-1]));
+                free(rev_polish[i-1]);
                 remove_str_from_array(rev_polish, i-1, rev_pol_len--);
                 i -=2;
             }else if (strcmp(rev_polish[i], "/")==0){
+                free(rev_polish[i]);
                 remove_str_from_array(rev_polish, i, rev_pol_len--);
                 sprintf(rev_polish[i-2], "%.17f", atof(rev_polish[i-2]) / atof(rev_polish[i-1]));
+                free(rev_polish[i-1]);
                 remove_str_from_array(rev_polish, i-1, rev_pol_len--);
                 i -=2;
             }else if (strcmp(rev_polish[i], "+")==0){
+                free(rev_polish[i]);
                 remove_str_from_array(rev_polish, i, rev_pol_len--);
                 sprintf(rev_polish[i-2], "%.17f", atof(rev_polish[i-2]) + atof(rev_polish[i-1]));
+                free(rev_polish[i-1]);
                 remove_str_from_array(rev_polish, i-1, rev_pol_len--);
                 i -=2;
             }else if (strcmp(rev_polish[i], "-")==0){
+                free(rev_polish[i]);
                 remove_str_from_array(rev_polish, i, rev_pol_len--);
                 sprintf(rev_polish[i-2], "%.17f", atof(rev_polish[i-2]) - atof(rev_polish[i-1]));
+                free(rev_polish[i-1]);
                 remove_str_from_array(rev_polish, i-1, rev_pol_len--);
                 i -=2;
             }else if (strcmp(rev_polish[i], "~")==0){
+                free(rev_polish[i]);
                 remove_str_from_array(rev_polish, i, rev_pol_len--);
                 sprintf(rev_polish[i-1], "%.17f", -atof(rev_polish[i-1]));
                 i--;
             }else if (strcmp(rev_polish[i], "|")==0){
+                free(rev_polish[i]);
                 remove_str_from_array(rev_polish, i, rev_pol_len--);
                 sprintf(rev_polish[i-1], "%.17f", sqrt(atof(rev_polish[i-1])));
                 i--;
             }else if (strcmp(rev_polish[i], "!")==0){
+                free(rev_polish[i]);
                 remove_str_from_array(rev_polish, i, rev_pol_len--);
                 sprintf(rev_polish[i-1], "%d", factorial(atof(rev_polish[i-1])));
                 i--;
             }
         }else if (hash_search(eq->functions, rev_polish[i]) != NULL){
             struct DataItem* func = hash_search(eq->functions, rev_polish[i]);
+            free(rev_polish[i]);
             remove_str_from_array(rev_polish, i, rev_pol_len--);
             long double* args = malloc(sizeof(long double) * func->data->arity);
             for (int j = 0; j<func->data->arity; j++) {
                 args[j] = atof(rev_polish[i-func->data->arity+(j>0)]);
                 if(j)
-                    remove_str_from_array(rev_polish, i-func->data->arity+(j>0), rev_pol_len--);
+                    //free(rev_polish[i-func->data->arity+1]);
+                    remove_str_from_array(rev_polish, i-func->data->arity+1, rev_pol_len--);
             }
             sprintf(rev_polish[i-func->data->arity], "%.17Lf", func->data->callback(args));
+            free(args);
             i-=func->data->arity;
         }
         i++;
     }
     
-    return atof(rev_polish[0]);
+    long double ret = atof(rev_polish[0]);
+    free(rev_polish[0]);
+    free(rev_polish);
+    return ret;
 }
 
 void equation_add_func(struct Equation* eq, char* name, int arity, long double (*callback)(long double[])){
@@ -400,6 +434,7 @@ void equation_add_func(struct Equation* eq, char* name, int arity, long double (
     data->arity = arity;
     data->callback = callback;
     hash_insert(eq->functions, name, data);
+    free_array(eq->rev_polish, eq->rev_pol_len);
     shunt(eq);
 }
 
@@ -412,4 +447,12 @@ int equation_is_equal(struct Equation* eq1, struct Equation* eq2){
         }
     }
     return 1;
+}
+
+void equation_destroy(struct Equation* eq){
+    free_array(eq->rev_polish, eq->rev_pol_len);
+    free(eq->equation);
+    hash_destroy(eq->operators);
+    hash_destroy(eq->functions);
+    free(eq);
 }
