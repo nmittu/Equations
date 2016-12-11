@@ -7,6 +7,8 @@
 //
 
 #include "Equation.h"
+#include "MathDef.h"
+#include "StrTools.h"
 #define FUNC_NAME_SIZE 50
 
 void insert_str(char** array, size_t* size, char* str, int index) {

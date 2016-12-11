@@ -13,8 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "HashTable.h"
-#include "MathDef.h"
-#include "StrTools.h"
+
 
 struct Equation {
     struct HashTable* operators;

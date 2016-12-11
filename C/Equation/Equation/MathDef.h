@@ -10,8 +10,6 @@
 #define MathDef_h
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
 
 long double math_log(long double args[]);
 long double math_ln(long double args[]);

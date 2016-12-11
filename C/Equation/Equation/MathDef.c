@@ -7,7 +7,7 @@
 //
 
 #include "MathDef.h"
-
+#include <math.h>
 
 long double math_log(long double args[]){
     return log(args[1])/log(args[0]);

@@ -10,12 +10,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Equation/Equation.c"
-            timestampString = "503051330.201175"
+            timestampString = "503108645.063583"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "27"
-            endingLineNumber = "27"
-            landmarkName = "find_func_tokens()"
+            startingLineNumber = "29"
+            endingLineNumber = "29"
+            landmarkName = "split_str()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

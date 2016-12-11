@@ -10,8 +10,7 @@
 #define StrTools_h
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+
 
 int str_search(char** source, size_t src_size, char* target);
 int str_len_cmp(const void* a, const void* b);

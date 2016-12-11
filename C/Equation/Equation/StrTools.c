@@ -7,7 +7,10 @@
 //
 
 #include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 #include "StrTools.h"
+
 
 int str_search(char** source, size_t src_size, char* target){
     int m = src_size;
