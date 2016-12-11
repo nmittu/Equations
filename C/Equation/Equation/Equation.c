@@ -7,6 +7,15 @@
 //
 
 #include "Equation.h"
+#define FUNC_NAME_SIZE 50
+
+void insert_str(char** array, size_t* size, char* str, int index) {
+	for (int i = *size; i > index; i--){
+		array[i] = array[i - 1];
+	}
+	(*size)++;
+	array[index] = str;
+}
 
 void remove_str_from_array(char** array, int index, int array_length){
     free(array[index]);
@@ -15,22 +24,28 @@ void remove_str_from_array(char** array, int index, int array_length){
 
 char** split_str(char** dest, char* str, size_t* size){
     for (int i = 0; i<*size; i++) {
-        dest[i] = malloc(sizeof(char)*15);
+        dest[i] = malloc(sizeof(char)*FUNC_NAME_SIZE);
         dest[i][0] = str[i];
         dest[i][1] = '\0';
     }
+	if (strcmp(dest[*size - 1], "\0") == 0) {
+		free(dest[*size - 1]);
+		dest[*size - 1] = NULL;
+		(*size)--;
+	}
     
     return dest;
 }
 
 char** find_func_tokens(char** array, size_t* size, struct HashTable* table){
-    char funcNames[table->length][50];
-    
+    char** funcNames = malloc(sizeof(char*)*table->length);
+
     for (int i = 0; i<table->length; i++) {
+		funcNames[i] = malloc(sizeof(char) * FUNC_NAME_SIZE);
         strcpy(funcNames[i], hash_search_i(table, i)->key);
     }
     
-    qsort(funcNames, table->length, 50, str_len_cmp);
+    qsort(funcNames, table->length, sizeof(char*), str_len_cmp);
     
     for (int i = 0; i<table->length; i++) {
         while (str_search(array, *size, funcNames[i]) != -1) {
@@ -45,6 +60,137 @@ char** find_func_tokens(char** array, size_t* size, struct HashTable* table){
     
     
     return array;
+}
+
+char** combine_nums(char** array, size_t* size) {
+	char** out = malloc(sizeof(char*)*1000);
+	size_t out_len = 0;
+	for (int i = 0; i < *size; i++){
+		if (out_len) {
+			if (str_is_dec(array[i]) && str_is_dec(out[out_len-1])) {
+				strcat(out[out_len - 1], array[i]);
+				free(array[i]);
+			}else{
+				out[out_len] = array[i];
+				out_len++;
+			}
+		}else{
+			out[out_len] = array[i];
+			out_len++;
+		}
+	}
+
+	*size = out_len;
+	return out;
+}
+
+char** convert_negatives(char** array, size_t* size, struct HashTable* table) {
+	for (int i = 0; i < *size; i++){
+		if (strcmp(array[i], "-") == 0) {
+			if (i - 1 < 0 || hash_search(table, array[i - 1]) != NULL || strcmp(array[i - 1], "(") == 0) {
+				free(array[i]);
+				array[i] = "~";
+			}
+		}
+	}
+
+	return array;
+}
+
+char** fix_paren_mult(char** array, size_t* size, struct HashTable* operators, struct HashTable* functions) {
+	for (int i = 0; i < *size; i++) {
+		if (strcmp(array[i], "(") == 0) {
+			if (i - 1 >= 0 && hash_search(operators, array[i - 1]) == NULL && hash_search(functions, array[i - 1]) == NULL && strcmp(array[i - 1], ",") != 0) {
+				insert_str(array, size, "*", i);
+			}
+		}else if (strcmp(array[i], ")") == 0){
+			if (i + 1 < *size && hash_search(operators, array[i + 1]) == NULL && hash_search(functions, array[i + 1]) == NULL && strcmp(array[i + 1], ",") != 0 && strcmp(array[i + 1], ")") != 0) {
+				insert_str(array, size, "*", i+1);
+			}
+		}
+	}
+
+	return array;
+}
+
+char** fix_var_mult(char** array, size_t* size, struct HashTable* operators, struct HashTable* functions) {
+	for (int i = 0; i < *size; i++){
+		if (hash_search(operators, array[i]) == NULL && !str_is_dec(array[i]) && strcmp(array[i], "(") != 0 && strcmp(array[i], ")") != 0 && strcmp(array[i], ",") != 0) {
+			if (i - 1 >= 0 && hash_search(operators, array[i - 1]) == NULL && hash_search(functions, array[i - 1]) == NULL && strcmp(array[i - 1], "(") != 0 && strcmp(array[i - 1], ")") != 0 && strcmp(array[i - 1], ",") != 0) {
+				insert_str(array, size, "*", i);
+				i--;
+			}
+		}
+	}
+
+	return array;
+}
+
+void shunt(struct Equation* eq) {
+	char** equation = eq->rev_polish;
+	int equation_len = eq->rev_pol_len;
+
+	char** opp_stack = malloc(sizeof(char*)*eq->rev_pol_len);
+	int opp_stack_len = 0;
+	eq->rev_polish = malloc(sizeof(char*)*eq->rev_pol_len);
+	eq->rev_pol_len = 0;
+
+	for (int i = 0; i < equation_len; i++){
+		if (hash_search(eq->operators, equation[i]) == NULL && hash_search(eq->functions, equation[i]) == NULL && strcmp(equation[i], "(") != 0 && strcmp(equation[i], ")") != 0 && strcmp(equation[i], ",") != 0) {
+			eq->rev_polish[eq->rev_pol_len] = equation[i];
+			eq->rev_pol_len++;
+		}else if (hash_search(eq->functions, equation[i]) != NULL) {
+			opp_stack[opp_stack_len] = equation[i];
+			opp_stack_len++;
+		}else if (strcmp(equation[i], ",") == 0) {
+			while (opp_stack_len && strcmp(opp_stack[opp_stack_len-1], "(") != 0){
+				eq->rev_polish[eq->rev_pol_len] = opp_stack[opp_stack_len-1];
+				opp_stack[opp_stack_len - 1] = NULL;
+				eq->rev_pol_len++;
+				opp_stack_len--;
+			}
+		}else if (hash_search(eq->operators, equation[i]) != NULL) {
+			while (opp_stack_len && hash_search(eq->operators, opp_stack[opp_stack_len - 1]) != NULL && ((hash_search(eq->operators, equation[i])->data->associativity == 'L' && hash_search(eq->operators, equation[i])->data->precedence <= hash_search(eq->operators, opp_stack[opp_stack_len-1])->data->precedence) || (hash_search(eq->operators, equation[i])->data->associativity == 'R' && hash_search(eq->operators, equation[i])->data->precedence < hash_search(eq->operators, opp_stack[opp_stack_len-1])->data->precedence))) {
+				eq->rev_polish[eq->rev_pol_len] = opp_stack[opp_stack_len - 1];
+				opp_stack[opp_stack_len - 1] = NULL;
+				eq->rev_pol_len++;
+				opp_stack_len--;
+			}
+			opp_stack[opp_stack_len] = equation[i];
+			opp_stack_len++;
+		}else if (strcmp(equation[i], "(") == 0) {
+			opp_stack[opp_stack_len] = equation[i];
+			opp_stack_len++;
+		}else if (strcmp(equation[i], ")") == 0) {
+			while (opp_stack_len && strcmp(opp_stack[opp_stack_len-1], "(") != 0){
+				eq->rev_polish[eq->rev_pol_len] = opp_stack[opp_stack_len - 1];
+				opp_stack[opp_stack_len-1] = NULL;
+				eq->rev_pol_len++;
+				opp_stack_len--;
+			}
+			if (opp_stack_len) {
+				free(opp_stack[opp_stack_len - 1]);
+				opp_stack[opp_stack_len - 1] = NULL;
+				opp_stack_len--;
+			}
+			if (opp_stack_len && hash_search(eq->functions, opp_stack[opp_stack_len - 1]) != NULL) {
+				eq->rev_polish[eq->rev_pol_len] = opp_stack[opp_stack_len - 1];
+				opp_stack[opp_stack_len - 1] = NULL;
+				opp_stack_len--;
+				eq->rev_pol_len++;
+			}
+		}
+	}
+
+	while (opp_stack_len){
+		eq->rev_polish[eq->rev_pol_len] = opp_stack[opp_stack_len - 1];
+		opp_stack[opp_stack_len - 1] = NULL;
+		opp_stack_len--;
+		eq->rev_pol_len++;
+	}
+
+	free(equation);
+	free(opp_stack);
 }
 
 struct Equation* equation_create(char* equation){
@@ -177,7 +323,10 @@ struct Equation* equation_create(char* equation){
     
     eq->rev_polish = (char**) malloc(sizeof(char*)*1000);
     eq->rev_pol_len = strlen(equation);
-    eq->rev_polish = find_func_tokens(split_str(eq->rev_polish, eq->equation, &eq->rev_pol_len), &eq->rev_pol_len, eq->functions);
+	
+    eq->rev_polish = fix_var_mult(fix_paren_mult(convert_negatives(combine_nums(find_func_tokens(split_str(eq->rev_polish, eq->equation, &eq->rev_pol_len), &eq->rev_pol_len, eq->functions), &eq->rev_pol_len), &eq->rev_pol_len, eq->operators), &eq->rev_pol_len, eq->operators, eq->functions), &eq->rev_pol_len, eq->operators, eq->functions);
     
+	shunt(eq);
+
     return eq;
 }

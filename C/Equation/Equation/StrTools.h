@@ -16,5 +16,6 @@
 int str_search(char** source, size_t src_size, char* target);
 int str_len_cmp(const void* a, const void* b);
 char* str_deblank(char* input);
+int str_is_dec(char* str);
 
 #endif /* StrTools_h */

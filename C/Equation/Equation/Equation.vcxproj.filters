@@ -27,12 +27,24 @@
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MathDef.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StrTools.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Equation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="HashTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MathDef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StrTools.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

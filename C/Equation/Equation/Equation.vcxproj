@@ -86,7 +86,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -148,10 +148,14 @@
     <ClCompile Include="Equation.c" />
     <ClCompile Include="HashTable.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="MathDef.c" />
+    <ClCompile Include="StrTools.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Equation.h" />
     <ClInclude Include="HashTable.h" />
+    <ClInclude Include="MathDef.h" />
+    <ClInclude Include="StrTools.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

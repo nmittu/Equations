@@ -6,6 +6,7 @@
 //  Copyright © 2016 MittuDev. All rights reserved.
 //
 
+#include <ctype.h>
 #include "StrTools.h"
 
 int str_search(char** source, size_t src_size, char* target){
@@ -18,6 +19,7 @@ int str_search(char** source, size_t src_size, char* target){
     
     for (int i = 0; i < end-n+1; i++) {
         char* str_found = malloc(sizeof(char)*50);
+		strcpy(str_found, "");
         for (int j = 0; j < n; j++) {
             strcat(str_found, source[i+j]);
         }
@@ -31,8 +33,8 @@ int str_search(char** source, size_t src_size, char* target){
 }
 
 int str_len_cmp(const void* a, const void* b){
-    size_t fa = strlen((const char *)a);
-    size_t fb = strlen((const char *)b);
+    size_t fa = strlen(*((char **)a));
+    size_t fb = strlen(*((char **)b));
     return (fa < fb) - (fa > fb);
 }
 
@@ -48,4 +50,24 @@ char* str_deblank(char* input){
     }
     output[j]=0;
     return output;
+}
+
+int str_is_dec(char* str) {
+	int is_dec = 1;
+	int i = 0;
+	int dec_count = 0;
+	while (str[i] != '\0') {
+		if (!(isdigit(str[i]) || str[i] == '.')) {
+			is_dec = 0;
+		}
+		if (str[i] == '.') {
+			if (dec_count >= 1) {
+				is_dec = 0;
+			}
+			dec_count++;
+		}
+		i++;
+	}
+
+	return is_dec;
 }
