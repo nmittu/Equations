@@ -61,7 +61,7 @@ printf("%d", equation_is_equal(eq, equation_create("log(3, x/2)")));
 equation_destroy(eq);
 ```
 
-Both of the following will output:
+All of the above will output:
 `0.8340437671464689 [2, 3, x, log, *, 3, 2, x, *, log, -] true`
 
 #### Custom Functions
@@ -93,5 +93,5 @@ equation_add_func(eq, "atan2", 2, atan2_func);
 printf("%Lf", equation_solve(eq, 25, "x"));
 ```
 
-Both of the following will output:
+All of the above will output:
 `1.4475874257006534`
