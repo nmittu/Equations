@@ -7,26 +7,21 @@
 //
 
 #include <stdio.h>
+#include <math.h>
 #include "Equation.h"
 #include "HashTable.h"
 #include "StrTools.h"
 
-long double add5(long double args[]){
-    return args[0]+args[1]+args[2]+args[3]+args[4];
+long double atan2_func(long double args[]){
+    return atan2(args[0], args[1]);
 }
 
 int main(int argc, const char * argv[]) {
     // insert code here...
     
-    struct Equation* eq = equation_create("add5(1, 2, 3, 4, 5)");
-    equation_add_func(eq, "add5", 5, add5);
-    
-    for (int i = 0; i<eq->rev_pol_len; i++) {
-        printf("%s ", eq->rev_polish[i]);
-    }
-    
-    printf("\n");
-    printf("%.17Lf\n", equation_solve(eq, 5, "x"));
+    struct Equation* eq = equation_create("atan2(3x, log(2, x^2))");
+    equation_add_func(eq, "atan2", 2, atan2_func);
+    printf("%.17Lf", equation_solve(eq, 25, "x"));
 
     equation_destroy(eq);
 
