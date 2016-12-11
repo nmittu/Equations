@@ -7,6 +7,9 @@
 //
 
 #include "Equation.h"
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
 #include "MathDef.h"
 #include "StrTools.h"
 #include "ArrayTools.h"
@@ -42,6 +45,7 @@ char** find_func_tokens(char** array, size_t* size, struct HashTable* table){
             int index = str_search(array, *size, funcNames[i]);
             strcpy(array[index], funcNames[i]);
             for (int j = 0; j<strlen(funcNames[i])-1; j++) {
+                free(array[index+1]);
                 remove_str_from_array(array, index+1, *size);
                 (*size)--;
             }
@@ -117,6 +121,13 @@ char** fix_var_mult(char** array, size_t* size, struct HashTable* operators, str
 }
 
 void shunt(struct Equation* eq) {
+    eq->rev_polish = (char**) malloc(sizeof(char*)*1000);
+    eq->rev_pol_len = strlen(eq->equation);
+    
+    eq->rev_polish = fix_var_mult(fix_paren_mult(convert_negatives(combine_nums(find_func_tokens(split_str(eq->rev_polish, eq->equation, &eq->rev_pol_len), &eq->rev_pol_len, eq->functions), &eq->rev_pol_len), &eq->rev_pol_len, eq->operators), &eq->rev_pol_len, eq->operators, eq->functions), &eq->rev_pol_len, eq->operators, eq->functions);
+    
+    
+    
 	char** equation = eq->rev_polish;
 	int equation_len = eq->rev_pol_len;
 
@@ -254,52 +265,52 @@ struct Equation* equation_create(char* equation){
     log->associativity = '\0';
     
     struct Data* ln = malloc(sizeof(struct Data));
-    log->arity = 1;
-    log->callback = math_ln;
-    log->precedence = -1;
-    log->associativity = '\0';
+    ln->arity = 1;
+    ln->callback = math_ln;
+    ln->precedence = -1;
+    ln->associativity = '\0';
     
     struct Data* abs = malloc(sizeof(struct Data));
-    log->arity = 1;
-    log->callback = math_abs;
-    log->precedence = -1;
-    log->associativity = '\0';
+    abs->arity = 1;
+    abs->callback = math_abs;
+    abs->precedence = -1;
+    abs->associativity = '\0';
     
     struct Data* acos = malloc(sizeof(struct Data));
-    log->arity = 1;
-    log->callback = math_acos;
-    log->precedence = -1;
-    log->associativity = '\0';
+    acos->arity = 1;
+    acos->callback = math_acos;
+    acos->precedence = -1;
+    acos->associativity = '\0';
     
     struct Data* asin = malloc(sizeof(struct Data));
-    log->arity = 1;
-    log->callback = math_asin;
-    log->precedence = -1;
-    log->associativity = '\0';
+    asin->arity = 1;
+    asin->callback = math_asin;
+    asin->precedence = -1;
+    asin->associativity = '\0';
     
     struct Data* atan = malloc(sizeof(struct Data));
-    log->arity = 1;
-    log->callback = math_atan;
-    log->precedence = -1;
-    log->associativity = '\0';
+    atan->arity = 1;
+    atan->callback = math_atan;
+    atan->precedence = -1;
+    atan->associativity = '\0';
     
     struct Data* cos = malloc(sizeof(struct Data));
-    log->arity = 1;
-    log->callback = math_cos;
-    log->precedence = -1;
-    log->associativity = '\0';
+    cos->arity = 1;
+    cos->callback = math_cos;
+    cos->precedence = -1;
+    cos->associativity = '\0';
     
     struct Data* sin = malloc(sizeof(struct Data));
-    log->arity = 1;
-    log->callback = math_sin;
-    log->precedence = -1;
-    log->associativity = '\0';
+    sin->arity = 1;
+    sin->callback = math_sin;
+    sin->precedence = -1;
+    sin->associativity = '\0';
     
     struct Data* tan = malloc(sizeof(struct Data));
-    log->arity = 1;
-    log->callback = math_tan;
-    log->precedence = -1;
-    log->associativity = '\0';
+    tan->arity = 1;
+    tan->callback = math_tan;
+    tan->precedence = -1;
+    tan->associativity = '\0';
     
     hash_insert(eq->functions, "log", log);
     hash_insert(eq->functions, "ln", ln);
@@ -311,12 +322,94 @@ struct Equation* equation_create(char* equation){
     hash_insert(eq->functions, "sin", sin);
     hash_insert(eq->functions, "tan", tan);
     
-    eq->rev_polish = (char**) malloc(sizeof(char*)*1000);
-    eq->rev_pol_len = strlen(equation);
-	
-    eq->rev_polish = fix_var_mult(fix_paren_mult(convert_negatives(combine_nums(find_func_tokens(split_str(eq->rev_polish, eq->equation, &eq->rev_pol_len), &eq->rev_pol_len, eq->functions), &eq->rev_pol_len), &eq->rev_pol_len, eq->operators), &eq->rev_pol_len, eq->operators, eq->functions), &eq->rev_pol_len, eq->operators, eq->functions);
-    
 	shunt(eq);
 
     return eq;
+}
+
+long double equation_solve(struct Equation* eq, long double var_val, char* var_name){
+    char** rev_polish = copy_array(eq->rev_polish, eq->rev_pol_len);
+    int rev_pol_len = eq->rev_pol_len;
+    for (int i = 0; i<rev_pol_len; i++) {
+        if(strcmp(rev_polish[i], var_name) == 0){
+            sprintf(rev_polish[i], "%Lf", var_val);
+        }
+    }
+    
+    int i = 0;
+    while (i<rev_pol_len) {
+        if(hash_search(eq->operators, rev_polish[i]) != NULL){
+            if(strcmp(rev_polish[i], "^")==0){
+                remove_str_from_array(rev_polish, i, rev_pol_len--);
+                sprintf(rev_polish[i-2], "%.17f", pow(atof(rev_polish[i-2]), atof(rev_polish[i-1])));
+                remove_str_from_array(rev_polish, i-1, rev_pol_len--);
+                i -= 2;
+            }else if (strcmp(rev_polish[i], "*")==0){
+                remove_str_from_array(rev_polish, i, rev_pol_len--);
+                sprintf(rev_polish[i-2], "%.17f", atof(rev_polish[i-2]) * atof(rev_polish[i-1]));
+                remove_str_from_array(rev_polish, i-1, rev_pol_len--);
+                i -=2;
+            }else if (strcmp(rev_polish[i], "/")==0){
+                remove_str_from_array(rev_polish, i, rev_pol_len--);
+                sprintf(rev_polish[i-2], "%.17f", atof(rev_polish[i-2]) / atof(rev_polish[i-1]));
+                remove_str_from_array(rev_polish, i-1, rev_pol_len--);
+                i -=2;
+            }else if (strcmp(rev_polish[i], "+")==0){
+                remove_str_from_array(rev_polish, i, rev_pol_len--);
+                sprintf(rev_polish[i-2], "%.17f", atof(rev_polish[i-2]) + atof(rev_polish[i-1]));
+                remove_str_from_array(rev_polish, i-1, rev_pol_len--);
+                i -=2;
+            }else if (strcmp(rev_polish[i], "-")==0){
+                remove_str_from_array(rev_polish, i, rev_pol_len--);
+                sprintf(rev_polish[i-2], "%.17f", atof(rev_polish[i-2]) - atof(rev_polish[i-1]));
+                remove_str_from_array(rev_polish, i-1, rev_pol_len--);
+                i -=2;
+            }else if (strcmp(rev_polish[i], "~")==0){
+                remove_str_from_array(rev_polish, i, rev_pol_len--);
+                sprintf(rev_polish[i-1], "%.17f", -atof(rev_polish[i-1]));
+                i--;
+            }else if (strcmp(rev_polish[i], "|")==0){
+                remove_str_from_array(rev_polish, i, rev_pol_len--);
+                sprintf(rev_polish[i-1], "%.17f", sqrt(atof(rev_polish[i-1])));
+                i--;
+            }else if (strcmp(rev_polish[i], "!")==0){
+                remove_str_from_array(rev_polish, i, rev_pol_len--);
+                sprintf(rev_polish[i-1], "%d", factorial(atof(rev_polish[i-1])));
+                i--;
+            }
+        }else if (hash_search(eq->functions, rev_polish[i]) != NULL){
+            struct DataItem* func = hash_search(eq->functions, rev_polish[i]);
+            remove_str_from_array(rev_polish, i, rev_pol_len--);
+            long double* args = malloc(sizeof(long double) * func->data->arity);
+            for (int j = 0; j<func->data->arity; j++) {
+                args[j] = atof(rev_polish[i-func->data->arity+(j>0)]);
+                if(j)
+                    remove_str_from_array(rev_polish, i-func->data->arity+(j>0), rev_pol_len--);
+            }
+            sprintf(rev_polish[i-func->data->arity], "%.17Lf", func->data->callback(args));
+            i-=func->data->arity;
+        }
+        i++;
+    }
+    
+    return atof(rev_polish[0]);
+}
+
+void equation_add_func(struct Equation* eq, char* name, int arity, long double (*callback)(long double[])){
+    struct Data* data = malloc(sizeof(struct Data));
+    data->arity = arity;
+    data->callback = callback;
+    hash_insert(eq->functions, name, data);
+    shunt(eq);
+}
+
+int equation_is_equal(struct Equation* eq1, struct Equation* eq2){
+    srand(time(NULL));
+    for (int i = 0; i<10; i++) {
+        int random = rand();
+        if(equation_solve(eq1, random, "x") != equation_solve(eq2, random, "x")){
+            return 0;
+        }
+    }
+    return 1;
 }

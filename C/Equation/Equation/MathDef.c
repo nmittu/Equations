@@ -46,3 +46,10 @@ long double math_sin(long double args[]){
 long double math_tan(long double args[]){
     return tan(args[0]);
 }
+
+int factorial(int n){
+    if(n == 0){
+        return 1;
+    }
+    return n * factorial(n-1);
+}

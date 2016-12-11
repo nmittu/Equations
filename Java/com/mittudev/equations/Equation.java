@@ -214,7 +214,7 @@ public class Equation {
                 double[] args = new double[arity];
                 for(int j = 0; j < arity; j++){
                     if(j>0){
-                        args[j] = new Double(reversePolish.remove(i-arity+j));
+                        args[j] = new Double(reversePolish.remove(i-arity+1));
                     }else{
                         args[j] = new Double(reversePolish.get(i-arity));
                     }

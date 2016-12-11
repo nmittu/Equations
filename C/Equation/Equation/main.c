@@ -11,18 +11,22 @@
 #include "HashTable.h"
 #include "StrTools.h"
 
-long double func(long double args[]){
-    return args[0];
+long double add5(long double args[]){
+    return args[0]+args[1]+args[2]+args[3]+args[4];
 }
 
 int main(int argc, const char * argv[]) {
     // insert code here...
     
-    struct Equation* eq = equation_create("log(abs(-2), 5x(x+5)(x+2)4-(6)1.54x)");
+    struct Equation* eq = equation_create("add5(1, 2, 3, 4, 5)");
+    equation_add_func(eq, "add5", 5, add5);
     
     for (int i = 0; i<eq->rev_pol_len; i++) {
         printf("%s ", eq->rev_polish[i]);
     }
+    
+    printf("\n");
+    printf("%.17Lf\n", equation_solve(eq, 5, "x"));
 
 	
 

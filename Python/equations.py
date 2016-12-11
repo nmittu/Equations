@@ -174,7 +174,7 @@ class Equation:
 				airity = self.functions[ReversePolish[i]][0]
 				for j in range(0, airity):
 					if(j):
-						args.append(float(ReversePolish.pop(i-airity+j)))
+						args.append(float(ReversePolish.pop(i-airity+1)))
 					else:
 						args.append(float(ReversePolish[i-airity]))
 				ReversePolish[i-airity] = self.functions[ReversePolish[i-airity+1]][1](*args)
@@ -201,8 +201,8 @@ class Equation:
 		self.shunt()
 
 		
-eq = Equation("atan2(log(3,2+(3*2/6)-x), 4)")
-eq.addFunc("atan2", 2, lambda x, y: math.atan2(x, y))
+eq = Equation("add5(1, 2, 3, 4, 5)")
+eq.addFunc("add5", 5, lambda a, b, c, d, e: a+b+c+d+e)
 
 print(eq.ReversePolish)
 print(eq.equation, eq.ReversePolish, eq.solve(1))#, eq.isEqual(Equation("x-0.00000000001")))

@@ -20,5 +20,6 @@ long double math_atan(long double args[]);
 long double math_cos(long double args[]);
 long double math_sin(long double args[]);
 long double math_tan(long double args[]);
+int factorial(int n);
 
 #endif /* MathDef_h */

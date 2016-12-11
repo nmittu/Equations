@@ -24,5 +24,8 @@ struct Equation {
 };
 
 struct Equation* equation_create(char* equation);
+long double equation_solve(struct Equation* eq, long double var_val, char* var_name);
+void equation_add_func(struct Equation* eq, char* name, int arity, long double (*callback)(long double[]));
+int equation_is_equal(struct Equation* eq1, struct Equation* eq2);
 
 #endif /* Equation_h */

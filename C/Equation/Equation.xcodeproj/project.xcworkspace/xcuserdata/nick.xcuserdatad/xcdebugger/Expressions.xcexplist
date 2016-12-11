@@ -6,6 +6,46 @@
          contextName = "main:main.c">
       </ContextState>
       <ContextState
+         contextName = "equation_solve:Equation.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "j&gt;0">
+            </PersistentString>
+            <PersistentString
+               value = "i-func-&gt;data-&gt;arity+(j&gt;0)">
+            </PersistentString>
+            <PersistentString
+               value = "rev_polish[i-func-&gt;data-&gt;arity+(j&gt;0)]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "add5:main.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "args[0]+args[1]+args[2]+args[3]+args[4]">
+            </PersistentString>
+            <PersistentString
+               value = "args[1]">
+            </PersistentString>
+            <PersistentString
+               value = "args[2]">
+            </PersistentString>
+            <PersistentString
+               value = "args[3]">
+            </PersistentString>
+            <PersistentString
+               value = "args[4]">
+            </PersistentString>
+            <PersistentString
+               value = "args[0]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "equation_create:Equation.c">
+      </ContextState>
+      <ContextState
          contextName = "find_func_tokens:Equation.c">
          <PersistentStrings>
             <PersistentString
